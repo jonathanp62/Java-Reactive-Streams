@@ -22,7 +22,7 @@
     A demonstration of reactive streams
   </description>
   <properties>
-    <logback.version>1.4.11</logback.version>
+    <logback.version>1.4.12</logback.version>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss zzz</maven.build.timestamp.format>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
@@ -321,6 +321,12 @@
       <groupId>org.reactivestreams</groupId>
       <artifactId>reactive-streams</artifactId>
       <version>${reactivestreams.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.reactivestreams</groupId>
+      <artifactId>reactive-streams-tck</artifactId>
+      <version>${reactivestreams.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
