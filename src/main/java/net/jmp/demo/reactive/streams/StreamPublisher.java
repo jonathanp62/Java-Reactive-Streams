@@ -1,5 +1,17 @@
 package net.jmp.demo.reactive.streams;
 
+/*
+ * (#)StreamPublisher.java  0.2.0   12/25/2023
+ * (#)StreamPublisher.java  0.1.0   12/25/2023
+ *
+ * Copyright (c) Jonathan M. Parker
+ * All Rights Reserved.
+ *
+ * @author    Jonathan Parker
+ * @version   0.2.0
+ * @since     0.1.0
+ */
+
 import java.util.Iterator;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -70,13 +82,27 @@ class StreamPublisher<T> implements Publisher<T> {
                 return;
             }
 
-            if (this.demand.get() > 0) {
-                this.demand.getAndAdd(elements);
+            for (; ;) {
+                long currentDemand = this.demand.getAcquire();
 
-                return;
+                if (currentDemand == Long.MAX_VALUE) {
+                    return;
+                }
+
+                long adjustedDemand = currentDemand + elements;
+
+                if (adjustedDemand < 0L) {
+                    adjustedDemand = Long.MAX_VALUE;
+                }
+
+                if (this.demand.compareAndSet(currentDemand, adjustedDemand)) {
+                    if (currentDemand > 0) {
+                        return;
+                    }
+
+                    break;
+                }
             }
-
-            this.demand.getAndAdd(elements);
 
             for (; this.demand.get() > 0 && this.iterator.hasNext() && !this.isTerminated(); this.demand.decrementAndGet()) {
                 try {

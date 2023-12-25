@@ -1,5 +1,17 @@
 package net.jmp.demo.reactive.streams;
 
+/*
+ * (#)Main.java 0.2.0   12/25/2023
+ * (#)Main.java 0.1.0   12/25/2023
+ *
+ * Copyright (c) Jonathan M. Parker
+ * All Rights Reserved.
+ *
+ * @author    Jonathan Parker
+ * @version   0.2.0
+ * @since     0.1.0
+ */
+
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 

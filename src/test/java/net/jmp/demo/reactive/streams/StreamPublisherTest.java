@@ -1,5 +1,17 @@
 package net.jmp.demo.reactive.streams;
 
+/*
+ * (#)StreamPublisherTest.java  0.2.0   12/25/2023
+ * (#)StreamPublisherTest.java  0.1.0   12/25/2023
+ *
+ * Copyright (c) Jonathan M. Parker
+ * All Rights Reserved.
+ *
+ * @author    Jonathan Parker
+ * @version   0.2.0
+ * @since     0.1.0
+ */
+
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -9,12 +21,8 @@ import org.reactivestreams.tck.TestEnvironment;
 import java.util.stream.Stream;
 
 public class StreamPublisherTest extends PublisherVerification<Integer> {
-    public StreamPublisherTest(final TestEnvironment env, final long publisherReferenceGCTimeoutMillis) {
-        super(env, publisherReferenceGCTimeoutMillis);
-    }
-
-    public StreamPublisherTest(final TestEnvironment env) {
-        super(env);
+    public StreamPublisherTest() {
+        super(new TestEnvironment());
     }
 
     @Override

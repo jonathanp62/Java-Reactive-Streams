@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+ @(#)pom.xml	0.2.0	12/25/2023
  @(#)pom.xml	0.1.0	12/23/2023
 
  Copyright (c) Jonathan Martin Parker
  All Rights Reserved.
  
  @author    Jonathan Parker
- @version   0.1.0
+ @version   0.2.0
  @since     0.1.0
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -16,7 +17,7 @@
   <groupId>net.jmp.demo.reactive.streams</groupId>
   <artifactId>reactive-streams</artifactId>
   <packaging>jar</packaging>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <name>A demonstration of reactive streams</name>
   <description>
     A demonstration of reactive streams
