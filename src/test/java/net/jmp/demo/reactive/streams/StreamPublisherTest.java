@@ -35,6 +35,7 @@ public class StreamPublisherTest extends PublisherVerification<Integer> {
         return new Publisher<>() {
             @Override
             public void subscribe(Subscriber<? super Integer> s) {
+                s.onSubscribe(null);
                 s.onError(new RuntimeException("Can't subscribe subscriber: " + s + ", because of reasons."));
             }
         };
@@ -42,7 +43,7 @@ public class StreamPublisherTest extends PublisherVerification<Integer> {
 
     @Override
     public long maxElementsFromPublisher() {
-        return Long.MAX_VALUE - 1;
+        return Long.MAX_VALUE;
     }
 
     @Override
