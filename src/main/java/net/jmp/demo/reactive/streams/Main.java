@@ -33,32 +33,10 @@ public final class Main {
     private void run() {
         this.logger.entry();
 
-        /* A publisher of a stream of integers */
+        /* A publisher and subscriber of a stream of integers */
 
         new StreamPublisher<>(() -> Stream.of(1, 2, 3, 4, 5, 6))
-                .subscribe(new Subscriber<>() {
-                    @Override
-                    public void onSubscribe(final Subscription subscription) {
-                        logger.info("onSubscribe");
-
-                        subscription.request(6);
-                    }
-
-                    @Override
-                    public void onNext(final Integer item) {
-                        logger.info("onNext: {}", item);
-                    }
-
-                    @Override
-                    public void onError(final Throwable throwable) {
-                        logger.error("onError: {}", throwable.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        logger.info("onComplete");
-                    }
-                });
+                .subscribe(new StreamSubscriber<>());
 
         this.logger.exit();
     }
