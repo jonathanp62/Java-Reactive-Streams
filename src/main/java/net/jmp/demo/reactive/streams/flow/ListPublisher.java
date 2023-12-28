@@ -14,9 +14,14 @@ package net.jmp.demo.reactive.streams.flow;
 import java.util.Iterator;
 import java.util.List;
 
+import java.util.concurrent.ExecutorService;
+
 import java.util.concurrent.Flow.Publisher;
 import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
+
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -28,10 +33,14 @@ import org.slf4j.LoggerFactory;
 
 import org.slf4j.ext.XLogger;
 
-public class ListPublisher<T> implements Publisher<T> {
+public class ListPublisher<T> implements Publisher<T>, AutoCloseable {
     private final XLogger logger = new XLogger(LoggerFactory.getLogger(this.getClass().getName()));
 
+    private final ExecutorService executor = ForkJoinPool.commonPool();
+
     private final Supplier<List<T>> listSupplier;
+
+    private boolean isSubscribed;
 
     public ListPublisher(final Supplier<List<T>> listSupplier) {
         super();
@@ -43,23 +52,39 @@ public class ListPublisher<T> implements Publisher<T> {
     public void subscribe(Subscriber<? super T> subscriber) {
         this.logger.entry(subscriber);
 
-        final var subscription = new ListSubscription(subscriber);
+        if (!this.isSubscribed) {
+            final var subscription = new ListSubscription(subscriber, this.executor);
 
-        subscriber.onSubscribe(subscription);
-        subscription.doOnSubscribed();
+            subscriber.onSubscribe(subscription);
+            subscription.doOnSubscribed();
+
+            this.isSubscribed = true;
+        } else {
+            subscriber.onError(new IllegalStateException("Already subscribed"));
+        }
 
         this.logger.exit();
     }
 
+    @Override
+    public void close() {
+        if (!this.executor.isShutdown())
+            this.executor.shutdown();
+    }
+
     private class ListSubscription implements Subscription {
         private final Subscriber<? super T> subscriber;
+        private final ExecutorService executor;
         private final Iterator<? extends T> iterator;
         private final AtomicBoolean isTerminated = new AtomicBoolean(false);
         private final AtomicLong demand = new AtomicLong();
         private final AtomicReference<Throwable> error = new AtomicReference<>();
 
-        ListSubscription(final Subscriber<? super T> subscriber) {
+        private Future<?> future;   // To allow cancellation
+
+        ListSubscription(final Subscriber<? super T> subscriber, final ExecutorService executor) {
             this.subscriber = subscriber;
+            this.executor = executor;
 
             Iterator<? extends T> listIterator = null;
 
@@ -75,7 +100,7 @@ public class ListPublisher<T> implements Publisher<T> {
         @Override
         public void request(final long elements) {
             if (elements <= 0 && !terminate()) {
-                this.subscriber.onError(new IllegalArgumentException("Negative subscription request"));
+                this.executor.execute(() -> this.subscriber.onError(new IllegalArgumentException("Negative subscription request")));
 
                 return;
             }
@@ -104,16 +129,16 @@ public class ListPublisher<T> implements Publisher<T> {
 
             for (; this.demand.get() > 0 && this.iterator.hasNext() && !this.isTerminated(); this.demand.decrementAndGet()) {
                 try {
-                    this.subscriber.onNext(this.iterator.next());
+                    this.future = this.executor.submit(() -> this.subscriber.onNext(this.iterator.next()));
                 } catch (final Exception e) {
                     if (!terminate()) {
-                        this.subscriber.onError(e);
+                        this.executor.execute(() -> this.subscriber.onError(e));
                     }
                 }
             }
 
             if(!this.iterator.hasNext()) {
-                this.subscriber.onComplete();
+                this.executor.execute(this.subscriber::onComplete); // () -> this.subscriber.onComplete()
             }
         }
 
@@ -121,13 +146,16 @@ public class ListPublisher<T> implements Publisher<T> {
             final Throwable throwable = error.get();
 
             if (throwable != null && !terminate()) {
-                this.subscriber.onError(throwable);
+                this.executor.execute(() -> this.subscriber.onError(throwable));
             }
         }
 
         @Override
         public void cancel() {
             this.terminate();
+
+            if (this.future != null)
+                this.future.cancel(false);
         }
 
         private boolean terminate() {

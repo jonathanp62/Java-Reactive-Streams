@@ -66,14 +66,16 @@ public final class Main {
     private void publishAndSubscribeWithFlow() {
         this.logger.entry();
 
-        new ListPublisher<>(() -> List.of("Red",
+        try (final var publisher = new ListPublisher<>(() -> List.of("Red",
                 "Orange",
                 "Yellow",
                 "Green",
                 "Blue",
                 "Indigo",
                 "Violet")
-        ).subscribe(new ListSubscriber<>());
+        )) {
+            publisher.subscribe(new ListSubscriber<>());
+        }
 
         this.logger.exit();
     }
