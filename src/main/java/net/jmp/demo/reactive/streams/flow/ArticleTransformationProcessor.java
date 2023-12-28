@@ -1,6 +1,7 @@
 package net.jmp.demo.reactive.streams.flow;
 
 /*
+ * (#)ArticleTransformationProcessor.java 0.5.0   12/28/2023
  * (#)ArticleTransformationProcessor.java 0.4.0   12/28/2023
  * (#)ArticleTransformationProcessor.java 0.3.0   12/27/2023
  *
@@ -8,7 +9,7 @@ package net.jmp.demo.reactive.streams.flow;
  * All Rights Reserved.
  *
  * @author    Jonathan Parker
- * @version   0.4.0
+ * @version   0.5.0
  * @since     0.3.0
  */
 
@@ -40,12 +41,12 @@ public final class ArticleTransformationProcessor extends SubmissionPublisher<Su
     public void subscribe(final Flow.Subscriber<? super Summary> subscriber) {
         super.subscribe(subscriber);
 
-        logger.info("subscribe");
+        this.logger.info("subscribe");
     }
 
     @Override
     public void onSubscribe(final Subscription subscription) {
-        logger.info("onSubscribe");
+        this.logger.info("onSubscribe");
 
         if (this.subscription == null) {
             this.subscription = subscription;
@@ -60,7 +61,7 @@ public final class ArticleTransformationProcessor extends SubmissionPublisher<Su
 
     @Override
     public void onNext(final Article article) {
-        logger.info("onNext: {}", article);
+        this.logger.info("onNext: {}", article);
 
         if (article == null)
             throw new NullPointerException("Null article received by onNext");
@@ -70,13 +71,13 @@ public final class ArticleTransformationProcessor extends SubmissionPublisher<Su
 
     @Override
     public void onError(final Throwable throwable) {
-        logger.error("onError: {}", throwable.getMessage());
+        this.logger.error("onError: {}", throwable.getMessage());
 
     }
 
     @Override
     public void onComplete() {
-        logger.info("onComplete");
+        this.logger.info("onComplete");
 
         close();    // Close this processor (submission publisher)
     }

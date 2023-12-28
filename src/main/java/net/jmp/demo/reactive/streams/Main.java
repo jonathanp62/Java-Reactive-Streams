@@ -1,6 +1,7 @@
 package net.jmp.demo.reactive.streams;
 
 /*
+ * (#)Main.java 0.5.0   12/28/2023
  * (#)Main.java 0.4.0   12/28/2023
  * (#)Main.java 0.3.0   12/27/2023
  * (#)Main.java 0.2.0   12/25/2023
@@ -10,7 +11,7 @@ package net.jmp.demo.reactive.streams;
  * All Rights Reserved.
  *
  * @author    Jonathan Parker
- * @version   0.4.0
+ * @version   0.5.0
  * @since     0.1.0
  */
 
@@ -27,6 +28,8 @@ import java.util.stream.Stream;
 
 import net.jmp.demo.reactive.streams.flow.*;
 import net.jmp.demo.reactive.streams.org.*;
+
+import org.reactivestreams.FlowAdapters;
 
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +50,8 @@ public final class Main {
         this.publishAndSubscribeWithOrg();
         this.publishAndSubscribeWithFlow();
 
-        this.transform();
+        this.transformWithOrg();
+        this.transformWithFlow();
 
         this.logger.exit();
     }
@@ -80,7 +84,26 @@ public final class Main {
         this.logger.exit();
     }
 
-    private void transform() {
+    private void transformWithOrg() {
+        this.logger.entry();
+
+        try (final var publisher = new SubmissionPublisher<Integer>()) {
+            final var processor = new DoublingProcessor();
+            final var subscriber = new IntegerSubscriber();
+
+            publisher.subscribe(FlowAdapters.toFlowProcessor(processor));
+            processor.subscribe(subscriber);
+
+            publisher.submit(1);
+            publisher.submit(2);
+            publisher.submit(3);
+            publisher.submit(4);
+        }
+
+        this.logger.exit();
+    }
+
+    private void transformWithFlow() {
         this.logger.entry();
 
         final List<Article> list = Arrays.asList(
