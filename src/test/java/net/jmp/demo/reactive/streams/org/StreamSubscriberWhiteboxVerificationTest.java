@@ -1,13 +1,14 @@
-package net.jmp.demo.reactive.streams;
+package net.jmp.demo.reactive.streams.org;
 
 /*
+ * (#)StreamSubscriberWhiteboxVerificationTest.java 0.4.0   12/28/2023
  * (#)StreamSubscriberWhiteboxVerificationTest.java 0.2.0   12/26/2023
  *
  * Copyright (c) Jonathan M. Parker
  * All Rights Reserved.
  *
  * @author    Jonathan Parker
- * @version   0.2.0
+ * @version   0.4.0
  * @since     0.1.0
  */
 

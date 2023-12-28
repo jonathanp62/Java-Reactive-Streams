@@ -1,30 +1,31 @@
-package net.jmp.demo.reactive.streams;
+package net.jmp.demo.reactive.streams.flow;
 
 /*
+ * (#)Summary.java  0.4.0   12/28/2023
  * (#)Summary.java  0.3.0   12/27/2023
  *
  * Copyright (c) Jonathan M. Parker
  * All Rights Reserved.
  *
  * @author    Jonathan Parker
- * @version   0.3.0
+ * @version   0.4.0
  * @since     0.3.0
  */
 
-final class Summary {
+public final class Summary {
     private final int id;
     private final String title;
 
-    Summary(final int id, final String title) {
+    public Summary(final int id, final String title) {
         this.id = id;
         this.title = title;
     }
 
-    int getId() {
+    public int getId() {
         return this.id;
     }
 
-    String getTitle() {
+    public String getTitle() {
         return this.title;
     }
 

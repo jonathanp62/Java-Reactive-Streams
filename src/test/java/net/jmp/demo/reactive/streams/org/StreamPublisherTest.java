@@ -1,6 +1,7 @@
-package net.jmp.demo.reactive.streams;
+package net.jmp.demo.reactive.streams.org;
 
 /*
+ * (#)StreamPublisherTest.java  0.4.0   12/28/2023
  * (#)StreamPublisherTest.java  0.2.0   12/25/2023
  * (#)StreamPublisherTest.java  0.1.0   12/25/2023
  *
@@ -8,7 +9,7 @@ package net.jmp.demo.reactive.streams;
  * All Rights Reserved.
  *
  * @author    Jonathan Parker
- * @version   0.2.0
+ * @version   0.4.0
  * @since     0.1.0
  */
 
