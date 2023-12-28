@@ -44,19 +44,36 @@ public final class Main {
     private void run() {
         this.logger.entry();
 
-        this.publishAndSubscribe();
+        this.publishAndSubscribeWithOrg();
+        this.publishAndSubscribeWithFlow();
+
         this.transform();
 
         this.logger.exit();
     }
 
-    private void publishAndSubscribe() {
+    private void publishAndSubscribeWithOrg() {
         this.logger.entry();
 
         /* A publisher and subscriber of a stream of integers */
 
         new StreamPublisher<>(() -> Stream.of(1, 2, 3, 4, 5, 6))
                 .subscribe(new StreamSubscriber<>());
+
+        this.logger.exit();
+    }
+
+    private void publishAndSubscribeWithFlow() {
+        this.logger.entry();
+
+        new ListPublisher<>(() -> List.of("Red",
+                "Orange",
+                "Yellow",
+                "Green",
+                "Blue",
+                "Indigo",
+                "Violet")
+        ).subscribe(new ListSubscriber<>());
 
         this.logger.exit();
     }
