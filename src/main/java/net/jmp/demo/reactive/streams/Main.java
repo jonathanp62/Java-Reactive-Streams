@@ -61,8 +61,9 @@ public final class Main {
 
         /* A publisher and subscriber of a stream of integers */
 
-        new StreamPublisher<>(() -> Stream.of(1, 2, 3, 4, 5, 6))
-                .subscribe(new StreamSubscriber<>());
+        try (final var publisher = new StreamPublisher<>(() -> Stream.of(1, 2, 3, 4, 5, 6))) {
+            publisher.subscribe(new StreamSubscriber<>());
+        }
 
         this.logger.exit();
     }

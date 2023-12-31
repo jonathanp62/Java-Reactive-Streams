@@ -1,6 +1,7 @@
 package net.jmp.demo.reactive.streams.org;
 
 /*
+ * (#)StreamPublisher.java  0.5.0   12/31/2023
  * (#)StreamPublisher.java  0.4.0   12/28/2023
  * (#)StreamPublisher.java  0.2.0   12/25/2023
  * (#)StreamPublisher.java  0.1.0   12/25/2023
@@ -9,11 +10,15 @@ package net.jmp.demo.reactive.streams.org;
  * All Rights Reserved.
  *
  * @author    Jonathan Parker
- * @version   0.4.0
+ * @version   0.5.0
  * @since     0.1.0
  */
 
 import java.util.Iterator;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -31,8 +36,10 @@ import org.slf4j.LoggerFactory;
 
 import org.slf4j.ext.XLogger;
 
-public class StreamPublisher<T> implements Publisher<T> {
+public class StreamPublisher<T> implements Publisher<T>, AutoCloseable {
     private final XLogger logger = new XLogger(LoggerFactory.getLogger(this.getClass().getName()));
+
+    private final ExecutorService executor = ForkJoinPool.commonPool();
 
     private final Supplier<Stream<T>> streamSupplier;
 
@@ -46,7 +53,7 @@ public class StreamPublisher<T> implements Publisher<T> {
     public void subscribe(final Subscriber<? super T> subscriber) {
         this.logger.entry(subscriber);
 
-        final var subscription = new StreamSubscription(subscriber);
+        final var subscription = new StreamSubscription(subscriber, this.executor);
 
         subscriber.onSubscribe(subscription);
         subscription.doOnSubscribed();
@@ -54,15 +61,25 @@ public class StreamPublisher<T> implements Publisher<T> {
         this.logger.exit();
     }
 
+    @Override
+    public void close() {
+        if (!this.executor.isShutdown())
+            this.executor.shutdown();
+    }
+
     private class StreamSubscription implements Subscription {
         private final Subscriber<? super T> subscriber;
+        private final ExecutorService executor;
         private final Iterator<? extends T> iterator;
         private final AtomicBoolean isTerminated = new AtomicBoolean(false);
         private final AtomicLong demand = new AtomicLong();
         private final AtomicReference<Throwable> error = new AtomicReference<>();
 
-        StreamSubscription(final Subscriber<? super T> subscriber) {
+        private Future<?> future;   // To allow cancellation
+
+        StreamSubscription(final Subscriber<? super T> subscriber, final ExecutorService executor) {
             this.subscriber = subscriber;
+            this.executor = executor;
 
             Iterator<? extends T> streamIterator = null;
 
@@ -78,7 +95,7 @@ public class StreamPublisher<T> implements Publisher<T> {
         @Override
         public void request(final long elements) {
             if (elements <= 0 && !terminate()) {
-                this.subscriber.onError(new IllegalArgumentException("Negative subscription request"));
+                this.executor.execute(() -> this.subscriber.onError(new IllegalArgumentException("Negative subscription request")));
 
                 return;
             }
@@ -107,16 +124,16 @@ public class StreamPublisher<T> implements Publisher<T> {
 
             for (; this.demand.get() > 0 && this.iterator.hasNext() && !this.isTerminated(); this.demand.decrementAndGet()) {
                 try {
-                    this.subscriber.onNext(this.iterator.next());
+                    this.future = this.executor.submit(() -> this.subscriber.onNext(this.iterator.next()));
                 } catch (final Exception e) {
                     if (!terminate()) {
-                        this.subscriber.onError(e);
+                        this.executor.execute(() -> this.subscriber.onError(e));
                     }
                 }
             }
 
             if(!this.iterator.hasNext()) {
-                this.subscriber.onComplete();
+                this.executor.execute(this.subscriber::onComplete); // () -> this.subscriber.onComplete()
             }
         }
 
@@ -124,13 +141,16 @@ public class StreamPublisher<T> implements Publisher<T> {
             final Throwable throwable = error.get();
 
             if (throwable != null && !terminate()) {
-                this.subscriber.onError(throwable);
+                this.executor.execute(() -> this.subscriber.onError(throwable));
             }
         }
 
         @Override
         public void cancel() {
             this.terminate();
+
+            if (this.future != null)
+                this.future.cancel(false);
         }
 
         private boolean terminate() {
