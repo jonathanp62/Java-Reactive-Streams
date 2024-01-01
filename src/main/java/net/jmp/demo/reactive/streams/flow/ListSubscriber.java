@@ -1,15 +1,19 @@
 package net.jmp.demo.reactive.streams.flow;
 
 /*
+ * (#)ListSubscriber.java   0.6.0   01/01/2024
  * (#)ListSubscriber.java   0.4.0   12/28/2023
  *
  * Copyright (c) Jonathan M. Parker
  * All Rights Reserved.
  *
  * @author    Jonathan Parker
- * @version   0.4.0
+ * @version   0.6.0
  * @since     0.4.0
  */
+
+import java.util.ArrayList;
+import java.util.List;
 
 import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
@@ -20,7 +24,7 @@ import org.slf4j.ext.XLogger;
 
 public class ListSubscriber<T> implements Subscriber<T> {
     private final XLogger logger = new XLogger(LoggerFactory.getLogger(this.getClass().getName()));
-
+    private final List<T> consumedElements = new ArrayList<>();
     private Subscription subscription;
 
     public ListSubscriber() {
@@ -48,6 +52,8 @@ public class ListSubscriber<T> implements Subscriber<T> {
 
         if (item == null)
             throw new NullPointerException("Null element received by onNext");
+
+        this.consumedElements.add(item);
     }
 
     @Override
@@ -58,5 +64,9 @@ public class ListSubscriber<T> implements Subscriber<T> {
     @Override
     public void onComplete() {
         logger.info("onComplete");
+    }
+
+    public List<T> getConsumedElements() {
+        return this.consumedElements;
     }
 }

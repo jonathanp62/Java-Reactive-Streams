@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+ @(#)pom.xml	0.6.0	01/01/2024
  @(#)pom.xml	0.5.0	12/28/2023
  @(#)pom.xml	0.4.0	12/28/2023
  @(#)pom.xml	0.3.0	12/26/2023
@@ -10,7 +11,7 @@
  All Rights Reserved.
  
  @author    Jonathan Parker
- @version   0.5.0
+ @version   0.6.0
  @since     0.1.0
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -20,12 +21,14 @@
   <groupId>net.jmp.demo.reactive.streams</groupId>
   <artifactId>reactive-streams</artifactId>
   <packaging>jar</packaging>
-  <version>0.5.0</version>
+  <version>0.6.0</version>
   <name>A demonstration of reactive streams</name>
   <description>
     A demonstration of reactive streams
   </description>
   <properties>
+    <assertj.version>3.24.2</assertj.version>
+    <awaitility.version>4.2.0</awaitility.version>
     <logback.version>1.4.12</logback.version>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss zzz</maven.build.timestamp.format>
     <maven.compiler.source>21</maven.compiler.source>
@@ -320,6 +323,18 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
       <version>${logback.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <version>${awaitility.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.reactivestreams</groupId>

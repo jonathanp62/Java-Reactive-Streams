@@ -1,13 +1,14 @@
 package net.jmp.demo.reactive.streams.flow;
 
 /*
+ * (#)ListPublisher.java    0.6.0   01/01/2024
  * (#)ListPublisher.java    0.4.0   12/28/2023
  *
  * Copyright (c) Jonathan M. Parker
  * All Rights Reserved.
  *
  * @author    Jonathan Parker
- * @version   0.4.0
+ * @version   0.6.0
  * @since     0.4.0
  */
 
@@ -70,6 +71,10 @@ public class ListPublisher<T> implements Publisher<T>, AutoCloseable {
     public void close() {
         if (!this.executor.isShutdown())
             this.executor.shutdown();
+    }
+
+    public boolean isSubscribed() {
+        return this.isSubscribed;
     }
 
     private class ListSubscription implements Subscription {
