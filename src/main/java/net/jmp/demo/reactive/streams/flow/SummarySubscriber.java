@@ -1,6 +1,7 @@
 package net.jmp.demo.reactive.streams.flow;
 
 /*
+ * (#)SummarySubscriber.java    0.6.0   01/01/2023
  * (#)SummarySubscriber.java    0.4.0   12/28/2023
  * (#)SummarySubscriber.java    0.3.0   12/27/2023
  *
@@ -11,6 +12,9 @@ package net.jmp.demo.reactive.streams.flow;
  * @version   0.4.0
  * @since     0.3.0
  */
+
+import java.util.ArrayList;
+import java.util.List;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -23,6 +27,7 @@ import org.slf4j.ext.XLogger;
 
 public class SummarySubscriber implements Subscriber<Summary> {
     private final XLogger logger = new XLogger(LoggerFactory.getLogger(this.getClass().getName()));
+    private final List<Summary> consumedSummaries = new ArrayList<>();
 
     private Subscription subscription;
 
@@ -58,6 +63,8 @@ public class SummarySubscriber implements Subscriber<Summary> {
 
         if (summary == null)
             throw new NullPointerException("Null summary received by onNext");
+
+        this.consumedSummaries.add(summary);
     }
 
     @Override
@@ -70,5 +77,9 @@ public class SummarySubscriber implements Subscriber<Summary> {
         logger.info("onComplete");
 
         this.latch.countDown();
+    }
+
+    public List<Summary> getConsumedSummaries() {
+        return this.consumedSummaries;
     }
 }
