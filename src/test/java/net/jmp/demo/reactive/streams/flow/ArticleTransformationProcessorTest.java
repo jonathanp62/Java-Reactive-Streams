@@ -33,7 +33,7 @@ public class ArticleTransformationProcessorTest {
     }
 
     @Test
-    public void testTransformation() throws InterruptedException {
+    public void testTransformation() {
         final List<Article> articles = List.of(
                 new Article(1, "Java Functional Interface", "Java"),
                 new Article(2, "Java Distinct Example", "Java"),

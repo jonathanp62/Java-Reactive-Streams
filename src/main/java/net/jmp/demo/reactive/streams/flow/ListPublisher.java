@@ -36,9 +36,7 @@ import org.slf4j.ext.XLogger;
 
 public class ListPublisher<T> implements Publisher<T>, AutoCloseable {
     private final XLogger logger = new XLogger(LoggerFactory.getLogger(this.getClass().getName()));
-
     private final ExecutorService executor = ForkJoinPool.commonPool();
-
     private final Supplier<List<T>> listSupplier;
 
     private boolean isSubscribed;

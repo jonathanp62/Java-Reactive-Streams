@@ -1,7 +1,7 @@
-package net.jmp.demo.reactive.streams.flow;
+package net.jmp.demo.reactive.streams.org;
 
 /*
- * (#)ListSubscriberTest.java   0.6.0   01/01/2024
+ * (#)StreamSubscriberTest.java 0.6.0   01/02/2024
  *
  * Copyright (c) Jonathan M. Parker
  * All Rights Reserved.
@@ -14,6 +14,7 @@ package net.jmp.demo.reactive.streams.flow;
 import java.util.List;
 
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,26 +24,20 @@ import static org.junit.Assert.*;
 
 import org.junit.*;
 
-public class ListSubscriberTest {
-    public ListSubscriberTest() {
+public class StreamSubscriberTest {
+    public StreamSubscriberTest() {
         super();
     }
 
     @Test
     public void testSubscriber() {
         final var items = List.of(
-                "Red",
-                "Orange",
-                "Yellow",
-                "Green",
-                "Blue",
-                "Indigo",
-                "Violet"
+                1, 2, 3, 4, 5, 6
         );
 
-        final var subscriber = new ListSubscriber<String>();
+        final var subscriber = new StreamSubscriber<Integer>();
 
-        try (final var publisher = new ListPublisher<>(() -> items)) {
+        try (final var publisher = new StreamPublisher<>(() -> Stream.of(1, 2, 3, 4, 5, 6))) {
             publisher.subscribe(subscriber);
 
             assertTrue(publisher.isSubscribed());
@@ -53,5 +48,7 @@ public class ListSubscriberTest {
                         () -> assertThat(subscriber.getConsumedElements())
                                 .containsAll(items)
                 );
+
+        assertEquals(6, subscriber.getConsumedElements().size());
     }
 }

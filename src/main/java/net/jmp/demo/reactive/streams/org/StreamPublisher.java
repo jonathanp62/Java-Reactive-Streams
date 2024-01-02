@@ -1,6 +1,7 @@
 package net.jmp.demo.reactive.streams.org;
 
 /*
+ * (#)StreamPublisher.java  0.6.0   01/02/2024
  * (#)StreamPublisher.java  0.5.0   12/31/2023
  * (#)StreamPublisher.java  0.4.0   12/28/2023
  * (#)StreamPublisher.java  0.2.0   12/25/2023
@@ -10,7 +11,7 @@ package net.jmp.demo.reactive.streams.org;
  * All Rights Reserved.
  *
  * @author    Jonathan Parker
- * @version   0.5.0
+ * @version   0.6.0
  * @since     0.1.0
  */
 
@@ -38,10 +39,10 @@ import org.slf4j.ext.XLogger;
 
 public class StreamPublisher<T> implements Publisher<T>, AutoCloseable {
     private final XLogger logger = new XLogger(LoggerFactory.getLogger(this.getClass().getName()));
-
     private final ExecutorService executor = ForkJoinPool.commonPool();
-
     private final Supplier<Stream<T>> streamSupplier;
+
+    private boolean isSubscribed;
 
     public StreamPublisher(final Supplier<Stream<T>> streamSupplier) {
         super();
@@ -58,6 +59,8 @@ public class StreamPublisher<T> implements Publisher<T>, AutoCloseable {
         subscriber.onSubscribe(subscription);
         subscription.doOnSubscribed();
 
+        this.isSubscribed = true;
+
         this.logger.exit();
     }
 
@@ -65,6 +68,10 @@ public class StreamPublisher<T> implements Publisher<T>, AutoCloseable {
     public void close() {
         if (!this.executor.isShutdown())
             this.executor.shutdown();
+    }
+
+    public boolean isSubscribed() {
+        return this.isSubscribed;
     }
 
     private class StreamSubscription implements Subscription {
