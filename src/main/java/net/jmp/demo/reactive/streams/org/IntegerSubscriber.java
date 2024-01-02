@@ -1,15 +1,19 @@
 package net.jmp.demo.reactive.streams.org;
 
 /*
+ * (#)IntegerSubscriber.java    0.6.0   01/02/2024
  * (#)IntegerSubscriber.java    0.5.0   12/28/2023
  *
  * Copyright (c) Jonathan M. Parker
  * All Rights Reserved.
  *
  * @author    Jonathan Parker
- * @version   0.5.0
+ * @version   0.6.0
  * @since     0.5.0
  */
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.reactivestreams.*;
 
@@ -19,7 +23,7 @@ import org.slf4j.ext.XLogger;
 
 public class IntegerSubscriber implements Subscriber<Integer> {
     private final XLogger logger = new XLogger(LoggerFactory.getLogger(this.getClass().getName()));
-
+    private final List<Integer> consumedIntegers = new ArrayList<>();
     private Subscription subscription;
 
     @Override
@@ -43,6 +47,8 @@ public class IntegerSubscriber implements Subscriber<Integer> {
 
         if (item == null)
             throw new NullPointerException("Null item received by onNext");
+
+        this.consumedIntegers.add(item);
     }
 
     @Override
@@ -53,5 +59,9 @@ public class IntegerSubscriber implements Subscriber<Integer> {
     @Override
     public void onComplete() {
         this.logger.info("onComplete");
+    }
+
+    public List<Integer> getConsumedIntegers() {
+        return this.consumedIntegers;
     }
 }
