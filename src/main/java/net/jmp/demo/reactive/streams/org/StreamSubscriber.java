@@ -1,6 +1,7 @@
 package net.jmp.demo.reactive.streams.org;
 
 /*
+ * (#)StreamSubscriber.java 0.7.0   01/03/2024
  * (#)StreamSubscriber.java 0.6.0   01/02/2024
  * (#)StreamSubscriber.java 0.4.0   12/28/2023
  * (#)StreamSubscriber.java 0.2.0   12/25/2023
@@ -9,21 +10,20 @@ package net.jmp.demo.reactive.streams.org;
  * All Rights Reserved.
  *
  * @author    Jonathan Parker
- * @version   0.6.0
+ * @version   0.7.0
  * @since     0.2.0
  */
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import org.slf4j.LoggerFactory;
 
 import org.slf4j.ext.XLogger;
 
-public class StreamSubscriber<T> implements Subscriber<T> {
+public class StreamSubscriber<T> extends WaitableSubscriber<T> {
     private final XLogger logger = new XLogger(LoggerFactory.getLogger(this.getClass().getName()));
     private final List<T> consumedElements = new ArrayList<>();
     private Subscription subscription;
@@ -34,7 +34,7 @@ public class StreamSubscriber<T> implements Subscriber<T> {
 
     @Override
     public void onSubscribe(final Subscription subscription) {
-        logger.info("onSubscribe");
+        this.logger.info("onSubscribe");
 
         if (this.subscription == null) {
             this.subscription = subscription;
@@ -49,7 +49,7 @@ public class StreamSubscriber<T> implements Subscriber<T> {
 
     @Override
     public void onNext(final T t) {
-        logger.info("onNext: {}", t);
+        this.logger.info("onNext: {}", t);
 
         if (t == null)
             throw new NullPointerException("Null element received by onNext");
@@ -59,12 +59,14 @@ public class StreamSubscriber<T> implements Subscriber<T> {
 
     @Override
     public void onError(final Throwable throwable) {
-        logger.error("onError: {}", throwable.getMessage());
+        this.logger.error("onError: {}", throwable.getMessage());
     }
 
     @Override
     public void onComplete() {
-        logger.info("onComplete");
+        this.logger.info("onComplete");
+
+        super.onComplete();
     }
 
     public List<T> getConsumedElements() {

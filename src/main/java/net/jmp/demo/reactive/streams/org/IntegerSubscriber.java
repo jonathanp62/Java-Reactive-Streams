@@ -1,6 +1,7 @@
 package net.jmp.demo.reactive.streams.org;
 
 /*
+ * (#)IntegerSubscriber.java    0.7.0   01/03/2024
  * (#)IntegerSubscriber.java    0.6.0   01/02/2024
  * (#)IntegerSubscriber.java    0.5.0   12/28/2023
  *
@@ -8,7 +9,7 @@ package net.jmp.demo.reactive.streams.org;
  * All Rights Reserved.
  *
  * @author    Jonathan Parker
- * @version   0.6.0
+ * @version   0.7.0
  * @since     0.5.0
  */
 
@@ -21,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import org.slf4j.ext.XLogger;
 
-public class IntegerSubscriber implements Subscriber<Integer> {
+public class IntegerSubscriber extends WaitableSubscriber<Integer> {
     private final XLogger logger = new XLogger(LoggerFactory.getLogger(this.getClass().getName()));
     private final List<Integer> consumedIntegers = new ArrayList<>();
     private Subscription subscription;
@@ -59,6 +60,8 @@ public class IntegerSubscriber implements Subscriber<Integer> {
     @Override
     public void onComplete() {
         this.logger.info("onComplete");
+
+        super.onComplete();
     }
 
     public List<Integer> getConsumedIntegers() {

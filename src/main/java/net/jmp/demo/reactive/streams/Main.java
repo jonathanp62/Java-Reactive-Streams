@@ -1,6 +1,7 @@
 package net.jmp.demo.reactive.streams;
 
 /*
+ * (#)Main.java 0.7.0   01/03/2024
  * (#)Main.java 0.5.0   12/28/2023
  * (#)Main.java 0.4.0   12/28/2023
  * (#)Main.java 0.3.0   12/27/2023
@@ -11,7 +12,7 @@ package net.jmp.demo.reactive.streams;
  * All Rights Reserved.
  *
  * @author    Jonathan Parker
- * @version   0.5.0
+ * @version   0.7.0
  * @since     0.1.0
  */
 
@@ -61,9 +62,15 @@ public final class Main {
 
         /* A publisher and subscriber of a stream of integers */
 
+        final var subscriber = new StreamSubscriber<>();
+
         try (final var publisher = new StreamPublisher<>(() -> Stream.of(1, 2, 3, 4, 5, 6))) {
-            publisher.subscribe(new StreamSubscriber<>());
+            publisher.subscribe(subscriber);
         }
+
+        subscriber.await();
+
+        this.logger.info("Consumed: {}", subscriber.getConsumedElements());
 
         this.logger.exit();
     }
@@ -88,9 +95,10 @@ public final class Main {
     private void transformWithOrg() {
         this.logger.entry();
 
+        final var subscriber = new IntegerSubscriber();
+
         try (final var publisher = new SubmissionPublisher<Integer>()) {
             final var processor = new DoublingProcessor();
-            final var subscriber = new IntegerSubscriber();
 
             publisher.subscribe(FlowAdapters.toFlowProcessor(processor));
             processor.subscribe(subscriber);
@@ -100,6 +108,10 @@ public final class Main {
             publisher.submit(3);
             publisher.submit(4);
         }
+
+        subscriber.await();
+
+        this.logger.info("Consumed: {}", subscriber.getConsumedIntegers());
 
         this.logger.exit();
     }
