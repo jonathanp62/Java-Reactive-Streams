@@ -78,6 +78,8 @@ public final class Main {
     private void publishAndSubscribeWithFlow() {
         this.logger.entry();
 
+        final var subscriber = new ListSubscriber<String>();
+
         try (final var publisher = new ListPublisher<>(() -> List.of("Red",
                 "Orange",
                 "Yellow",
@@ -86,8 +88,12 @@ public final class Main {
                 "Indigo",
                 "Violet")
         )) {
-            publisher.subscribe(new ListSubscriber<>());
+            publisher.subscribe(subscriber);
         }
+
+        subscriber.await();
+
+        this.logger.info("Consumed: {}", subscriber.getConsumedElements());
 
         this.logger.exit();
     }
@@ -129,25 +135,18 @@ public final class Main {
                 new Summary(article.getId(), article.getTitle());
 
         final var processor = new ArticleTransformationProcessor(function);
-        final var countDownLatch = new CountDownLatch(1);
+        final var subscriber = new SummarySubscriber();
 
         try (final SubmissionPublisher<Article> publisher = new SubmissionPublisher<>()) {
-            final SummarySubscriber subscriber = new SummarySubscriber(countDownLatch);
-
             publisher.subscribe(processor);     // Subscribe to transformer
             processor.subscribe(subscriber);    // Subscribe to summary
 
             list.forEach(publisher::submit);    // article -> publisher.submit(article)
         }
 
-        try {
-            if (!countDownLatch.await(2, TimeUnit.SECONDS))
-                this.logger.error("Timeout waiting for the summary subscriber to complete");
-        } catch (final InterruptedException ie) {
-            this.logger.catching(ie);
+        subscriber.await();
 
-            Thread.currentThread().interrupt();
-        }
+        this.logger.info("Consumed: {}", subscriber.getConsumedSummaries());
 
         this.logger.exit();
     }

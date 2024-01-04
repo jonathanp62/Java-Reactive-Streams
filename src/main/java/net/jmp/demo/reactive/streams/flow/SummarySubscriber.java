@@ -1,6 +1,7 @@
 package net.jmp.demo.reactive.streams.flow;
 
 /*
+ * (#)SummarySubscriber.java    0.7.0   01/04/2023
  * (#)SummarySubscriber.java    0.6.0   01/01/2023
  * (#)SummarySubscriber.java    0.4.0   12/28/2023
  * (#)SummarySubscriber.java    0.3.0   12/27/2023
@@ -9,37 +10,27 @@ package net.jmp.demo.reactive.streams.flow;
  * All Rights Reserved.
  *
  * @author    Jonathan Parker
- * @version   0.4.0
+ * @version   0.7.0
  * @since     0.3.0
  */
 
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.concurrent.CountDownLatch;
-
-import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
 
 import org.slf4j.LoggerFactory;
 
 import org.slf4j.ext.XLogger;
 
-public class SummarySubscriber implements Subscriber<Summary> {
+public class SummarySubscriber extends WaitableSubscriber<Summary> {
     private final XLogger logger = new XLogger(LoggerFactory.getLogger(this.getClass().getName()));
     private final List<Summary> consumedSummaries = new ArrayList<>();
 
     private Subscription subscription;
 
-    private final CountDownLatch latch;
-
-    public SummarySubscriber(final CountDownLatch countDownLatch) {
+    public SummarySubscriber() {
         super();
-
-        this.latch = countDownLatch;
-
-        if (this.latch.getCount() != 1)
-            throw new IllegalStateException("The value of the countdown latch must be 1");
     }
 
     @Override
@@ -76,7 +67,7 @@ public class SummarySubscriber implements Subscriber<Summary> {
     public void onComplete() {
         logger.info("onComplete");
 
-        this.latch.countDown();
+        super.onComplete();
     }
 
     public List<Summary> getConsumedSummaries() {

@@ -1,19 +1,19 @@
 package net.jmp.demo.reactive.streams.flow;
 
 /*
+ * (#)ArticleTransformationProcessorTest.java   0.7.0   01/04/2024
  * (#)ArticleTransformationProcessorTest.java   0.6.0   01/01/2024
  *
  * Copyright (c) Jonathan M. Parker
  * All Rights Reserved.
  *
  * @author    Jonathan Parker
- * @version   0.6.0
+ * @version   0.7.0
  * @since     0.6.0
  */
 
 import java.util.List;
 
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.SubmissionPublisher;
 import java.util.concurrent.TimeUnit;
 
@@ -50,8 +50,7 @@ public class ArticleTransformationProcessorTest {
                 new Summary(article.getId(), article.getTitle());
 
         final var processor = new ArticleTransformationProcessor(function);
-        final var countDownLatch = new CountDownLatch(1);
-        final var subscriber = new SummarySubscriber(countDownLatch);
+        final var subscriber = new SummarySubscriber();
 
         try (final SubmissionPublisher<Article> publisher = new SubmissionPublisher<>()) {
             publisher.subscribe(processor);     // Subscribe to transformer
@@ -65,8 +64,6 @@ public class ArticleTransformationProcessorTest {
                         () -> assertThat(subscriber.getConsumedSummaries())
                                 .hasSize(3)
                 );
-
-        assertEquals(0, countDownLatch.getCount());
 
         assertTrue(subscriber.getConsumedSummaries().contains(summaries.get(0)));
         assertTrue(subscriber.getConsumedSummaries().contains(summaries.get(1)));

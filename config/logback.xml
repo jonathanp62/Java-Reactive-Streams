@@ -37,6 +37,9 @@
   <logger name="net.jmp.demo.reactive.streams.flow.SummarySubscriber" additivity="false" level="info">
     <appender-ref ref="MAIN" />
   </logger>
+  <logger name="net.jmp.demo.reactive.streams.flow.WaitableSubscriber" additivity="false" level="info">
+    <appender-ref ref="MAIN" />
+  </logger>
   <logger name="net.jmp.demo.reactive.streams.org.DoublingProcessor" additivity="false" level="info">
     <appender-ref ref="MAIN" />
   </logger>
