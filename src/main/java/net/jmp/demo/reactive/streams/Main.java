@@ -1,6 +1,7 @@
 package net.jmp.demo.reactive.streams;
 
 /*
+ * (#)Main.java 0.8.0   01/05/2024
  * (#)Main.java 0.7.0   01/03/2024
  * (#)Main.java 0.5.0   12/28/2023
  * (#)Main.java 0.4.0   12/28/2023
@@ -12,16 +13,14 @@ package net.jmp.demo.reactive.streams;
  * All Rights Reserved.
  *
  * @author    Jonathan Parker
- * @version   0.7.0
+ * @version   0.8.0
  * @since     0.1.0
  */
 
 import java.util.Arrays;
 import java.util.List;
 
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.SubmissionPublisher;
-import java.util.concurrent.TimeUnit;
 
 import java.util.function.Function;
 
@@ -29,6 +28,7 @@ import java.util.stream.Stream;
 
 import net.jmp.demo.reactive.streams.flow.*;
 import net.jmp.demo.reactive.streams.org.*;
+import net.jmp.demo.reactive.streams.rxjava.*;
 
 import org.reactivestreams.FlowAdapters;
 
@@ -50,6 +50,7 @@ public final class Main {
 
         this.publishAndSubscribeWithOrg();
         this.publishAndSubscribeWithFlow();
+        this.publishAndSubscribeWithRxJava();
 
         this.transformWithOrg();
         this.transformWithFlow();
@@ -94,6 +95,35 @@ public final class Main {
         subscriber.await();
 
         this.logger.info("Consumed: {}", subscriber.getConsumedElements());
+
+        this.logger.exit();
+    }
+
+    private void publishAndSubscribeWithRxJava() {
+        this.logger.entry();
+
+        final var source = new ListObservable<>(() -> List.of(
+                "Bach",
+                "Beethoven",
+                "Brahms",
+                "Bruckner",
+                "Cavalli",
+                "Haydn",
+                "Mozart",
+                "Puccini",
+                "Purcell",
+                "Scarlatti",
+                "Verdi",
+                "Wagner"
+
+        )).create();
+
+        final var listObserver = new ListObserver<String>();
+        final var observer = listObserver.create();
+
+        source.subscribe(observer);
+
+        listObserver.await();
 
         this.logger.exit();
     }
