@@ -48,12 +48,12 @@ public final class Main {
     private void run() {
         this.logger.entry();
 
-//        this.publishAndSubscribeWithOrg();
-//        this.publishAndSubscribeWithFlow();
+        this.publishAndSubscribeWithOrg();
+        this.publishAndSubscribeWithFlow();
         this.publishAndSubscribeWithRxJava();
 
-//        this.transformWithOrg();
-//        this.transformWithFlow();
+        this.transformWithOrg();
+        this.transformWithFlow();
 
         this.logger.exit();
     }
@@ -115,7 +115,6 @@ public final class Main {
                 "Scarlatti",
                 "Verdi",
                 "Wagner"
-
         ));
 
         final var source = observable.create();
