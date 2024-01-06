@@ -1,18 +1,21 @@
 package net.jmp.demo.reactive.streams.org;
 
 /*
+ * (#)WaitableSubscriber.java   0.8.0   01/06/2024
  * (#)WaitableSubscriber.java   0.7.0   01/03/2024
  *
  * Copyright (c) Jonathan M. Parker
  * All Rights Reserved.
  *
  * @author    Jonathan Parker
- * @version   0.7.0
+ * @version   0.8.0
  * @since     0.7.0
  */
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import net.jmp.demo.reactive.streams.exceptions.WaitableSubscriberException;
 
 import org.reactivestreams.Subscriber;
 
@@ -44,13 +47,13 @@ public abstract class WaitableSubscriber<T> implements Subscriber<T> {
 
         try {
             if (!this.countDownLatch.await(timeout, unit))
-                throw new RuntimeException("Timed out waiting for the publisher to complete");
+                throw new WaitableSubscriberException("Timed out waiting for the publisher to complete");
         } catch (final InterruptedException ie) {
             this.logger.catching(ie);
 
             Thread.currentThread().interrupt();
 
-            throw new RuntimeException("Interrupted waiting for the publisher to complete");
+            throw new WaitableSubscriberException("Interrupted waiting for the publisher to complete", ie);
         }
 
         return this;

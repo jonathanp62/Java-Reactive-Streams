@@ -48,12 +48,12 @@ public final class Main {
     private void run() {
         this.logger.entry();
 
-        this.publishAndSubscribeWithOrg();
-        this.publishAndSubscribeWithFlow();
+//        this.publishAndSubscribeWithOrg();
+//        this.publishAndSubscribeWithFlow();
         this.publishAndSubscribeWithRxJava();
 
-        this.transformWithOrg();
-        this.transformWithFlow();
+//        this.transformWithOrg();
+//        this.transformWithFlow();
 
         this.logger.exit();
     }
@@ -102,7 +102,7 @@ public final class Main {
     private void publishAndSubscribeWithRxJava() {
         this.logger.entry();
 
-        final var source = new ListObservable<>(() -> List.of(
+        final var observable = new ListObservable<>(() -> List.of(
                 "Bach",
                 "Beethoven",
                 "Brahms",
@@ -116,14 +116,16 @@ public final class Main {
                 "Verdi",
                 "Wagner"
 
-        )).create();
+        ));
 
+        final var source = observable.create();
         final var listObserver = new ListObserver<String>();
         final var observer = listObserver.create();
 
         source.subscribe(observer);
 
         listObserver.await();
+        observable.destroy();
 
         this.logger.exit();
     }

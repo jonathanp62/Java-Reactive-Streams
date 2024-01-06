@@ -17,6 +17,9 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import java.util.List;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
+
 import java.util.function.Supplier;
 
 import org.slf4j.LoggerFactory;
@@ -25,7 +28,7 @@ import org.slf4j.ext.XLogger;
 
 public class ListObservable<T> {
     private final XLogger logger = new XLogger(LoggerFactory.getLogger(this.getClass().getName()));
-
+    private final ExecutorService executor = ForkJoinPool.commonPool();
     private final Supplier<List<T>> listSupplier;
 
     public ListObservable(final Supplier<List<T>> listSupplier) {
@@ -39,10 +42,19 @@ public class ListObservable<T> {
 
         final var observable = Observable
                 .fromIterable(this.listSupplier.get())
-                .subscribeOn(Schedulers.newThread());
+                .subscribeOn(Schedulers.from(this.executor));
 
         this.logger.exit(observable);
 
         return observable;
+    }
+
+    public void destroy() {
+        this.logger.entry();
+
+        if (!this.executor.isShutdown())
+            this.executor.shutdown();
+
+        this.logger.exit();
     }
 }
