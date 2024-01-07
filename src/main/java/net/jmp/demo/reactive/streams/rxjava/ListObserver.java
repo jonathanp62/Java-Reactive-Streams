@@ -17,12 +17,16 @@ import io.reactivex.rxjava3.core.Observer;
 
 import io.reactivex.rxjava3.disposables.Disposable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.LoggerFactory;
 
 import org.slf4j.ext.XLogger;
 
 public class ListObserver<T> extends WaitableObserver<T> {
     private final XLogger logger = new XLogger(LoggerFactory.getLogger(this.getClass().getName()));
+    private final List<T> observedElements = new ArrayList<>();
 
     public ListObserver() {
         super();
@@ -42,8 +46,10 @@ public class ListObserver<T> extends WaitableObserver<T> {
             }
 
             @Override
-            public void onNext(final @NonNull Object o) {
-                logger.info("onNext: {}", o);
+            public void onNext(final @NonNull T t) {
+                logger.info("onNext: {}", t);
+
+                observedElements.add(t);
             }
 
             @Override
@@ -64,6 +70,10 @@ public class ListObserver<T> extends WaitableObserver<T> {
         this.logger.exit(observer);
 
         return observer;
+    }
+
+    public List<T> getObservedElements() {
+        return this.observedElements;
     }
 
     private void complete() {

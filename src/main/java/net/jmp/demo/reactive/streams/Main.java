@@ -124,6 +124,9 @@ public final class Main {
         source.subscribe(observer);
 
         listObserver.await();
+
+        this.logger.info("Observed: {}", listObserver.getObservedElements());
+
         observable.destroy();
 
         this.logger.exit();
