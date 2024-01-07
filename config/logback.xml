@@ -62,6 +62,12 @@
   <logger name="net.jmp.demo.reactive.streams.rxjava.ListObserver" additivity="false" level="info">
     <appender-ref ref="MAIN" />
   </logger>
+  <logger name="net.jmp.demo.reactive.streams.rxjava.PersonObserver" additivity="false" level="info">
+    <appender-ref ref="MAIN" />
+  </logger>
+  <logger name="net.jmp.demo.reactive.streams.rxjava.PersonTransformingObservable" additivity="false" level="info">
+    <appender-ref ref="MAIN" />
+  </logger>
   <logger name="net.jmp.demo.reactive.streams.rxjava.WaitableObserver" additivity="false" level="info">
     <appender-ref ref="MAIN" />
   </logger>

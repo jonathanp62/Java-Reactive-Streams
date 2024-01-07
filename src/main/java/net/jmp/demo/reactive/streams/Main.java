@@ -54,6 +54,7 @@ public final class Main {
 
         this.transformWithOrg();
         this.transformWithFlow();
+        this.transformWithRxJava();
 
         this.logger.exit();
     }
@@ -181,6 +182,32 @@ public final class Main {
         subscriber.await();
 
         this.logger.info("Consumed: {}", subscriber.getConsumedSummaries());
+
+        this.logger.exit();
+    }
+
+    private void transformWithRxJava() {
+        this.logger.entry();
+
+        final List<Person> people = List.of(
+                new Person("Smith", "John", 55),
+                new Person("Smith", "Jane", 52),
+                new Person("Doe", "Larry", 32),
+                new Person("Doe", "Lucy", 33),
+                new Person("Ewing", "JR", 40),
+                new Person("Ewing", "Sue Ellen", 40)
+        );
+
+        final var observable = new PersonTransformingObservable(() -> people);
+        final var personObserver = new PersonObserver();
+
+        observable.create().subscribe(personObserver.create());
+
+        personObserver.await();
+
+        this.logger.info("Observed: {}", personObserver.getObservedPeople());
+
+        observable.destroy();
 
         this.logger.exit();
     }
