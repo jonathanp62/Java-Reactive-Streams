@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+ @(#)pom.xml	0.9.0	01/07/2024
  @(#)pom.xml	0.8.0	01/05/2024
  @(#)pom.xml	0.7.0	01/03/2024
  @(#)pom.xml	0.6.0	01/01/2024
@@ -13,7 +14,7 @@
  All Rights Reserved.
  
  @author    Jonathan Parker
- @version   0.8.0
+ @version   0.9.0
  @since     0.1.0
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -23,7 +24,7 @@
   <groupId>net.jmp.demo.reactive.streams</groupId>
   <artifactId>reactive-streams</artifactId>
   <packaging>jar</packaging>
-  <version>0.8.0</version>
+  <version>0.9.0</version>
   <name>A demonstration of reactive streams</name>
   <description>
     A demonstration of reactive streams
