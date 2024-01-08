@@ -1,13 +1,14 @@
 package net.jmp.demo.reactive.streams.rxjava;
 
 /*
+ * (#)PersonObserverTest.java   0.9.0   01/08/2024
  * (#)PersonObserverTest.java   0.8.0   01/06/2024
  *
  * Copyright (c) Jonathan M. Parker
  * All Rights Reserved.
  *
  * @author    Jonathan Parker
- * @version   0.6.0
+ * @version   0.9.0
  * @since     0.6.0
  */
 
@@ -38,11 +39,11 @@ public class PersonObserverTest {
         );
 
         final List<String> expected = List.of(
-                "John Smith",
+                "JR Ewing",
                 "Jane Smith",
+                "John Smith",
                 "Larry Doe",
                 "Lucy Doe",
-                "JR Ewing",
                 "Sue Ellen Ewing"
         );
 
@@ -54,7 +55,7 @@ public class PersonObserverTest {
         await().atMost(1_000, TimeUnit.MILLISECONDS)
                 .untilAsserted(
                         () -> assertThat(personObserver.getObservedPeople())
-                                .containsAll(expected)
+                                .containsExactlyElementsOf(expected)
                 );
 
         observable.destroy();
